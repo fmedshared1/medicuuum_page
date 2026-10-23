@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<title>HKUMED Final MB Prep</title>
+
+<!-- External copy of the stylesheet (keep styles.css next to this file) -->
+<link rel="stylesheet" href="styles.css" />
+
+<!-- Inline copy of the SAME stylesheet, so the page is styled even if styles.css is missing -->
+<style>
+/* ---------- Design tokens (from the shared stylesheet) ---------- */
+:root{
+  color-scheme:light;
+  --bg:#F8F4F1;            /* straw white - matches the logo.jpg background so the JPG blends in */
+  --surface:#FFFFFF; --surface-2:#EEF0F4; --ink:#17202B; --muted:#5A6473; --line:#DCE1E8;
+  --accent:#B3202E; --accent-ink:#FFFFFF; --accent-soft:#FBEAEC; --blue:#2A67AD; --blue-soft:#E6EFF9;
+  --good:#2C7A51; --good-soft:#E3F2EA; --warn:#A76A12; --warn-soft:#FBF0DC; --bad:#BF2F2F; --bad-soft:#FBE6E6;
+  --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:10px;
+}
+*{box-sizing:border-box}
+
+/* Page must always be scrollable, no matter how long the question/answer gets */
+html, body {
+  height: auto;
+  overflow-y: auto;
+}
+
+body {
+  margin: 0;
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-bottom: 60px;   /* breathing room at the bottom when scrolled */
+}
+button, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 4px; }
+
+/* ---------- Burgundy top bar ---------- */
+.top-bar {
+  width: 100%;
+  height: 60px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  position: relative;
+  flex-shrink: 0;
+  border-bottom: 1px solid #7D1620;
+}
+
+/* Left arrow + tiny home popup */
+.nav-left {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.arrow-btn {
+  background: transparent;
+  border: none;
+  color: var(--accent-ink);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-family: var(--body);
+}
+
+.arrow-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* styled like the design system's .menu dropdown */
+.home-popup {
+  position: absolute;
+  top: 54px;
+  left: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 8px 14px;
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+  display: none;
+  white-space: nowrap;
+  box-shadow: 0 10px 30px rgb(0 0 0 / .14);
+  z-index: 30;
+}
+
+.home-popup:hover {
+  background: var(--surface-2);
+}
+
+.home-popup.show {
+  display: inline-block;
+}
+
+/* Right logout button - design-system .btn on the burgundy bar */
+.logout-btn {
+  display: inline-flex;
+  align-items: center;
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid var(--surface);
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.logout-btn:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent-soft);
+}
+
+.large-textbox:focus {
+  border-color: var(--blue);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(42, 103, 173, 0.2);
+}
+
+/* ---------- Logo: top-left, below the burgundy bar.
+   40px of top padding clears the home popup that hangs under the bar. ---------- */
+.logo-row {
+  width: 100%;
+  padding: 40px 20px 0 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.logo-row img {
+  height: 48px;
+  width: auto;
+  display: block;
+}
+
+/* ---------- Question: same width/font as the LLM answer, always centred, any length ---------- */
+.question-row {
+  width: 60%;
+  margin: 24px auto 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.question-text {
+  width: 100%;
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  line-height: 1.4;
+  margin: 0;
+  text-align: center;       /* always centred */
+  white-space: pre-wrap;    /* long / multi-line questions wrap and push the page down */
+  word-wrap: break-word;
+}
+
+.large-textbox-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.large-textbox {
+  width: 60%;
+  height: 300px;
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  resize: vertical;
+}
+
+.large-textbox::placeholder {
+  color: var(--muted);
+}
+
+/* Evaluate - design-system .btn.primary */
+.evaluate-button {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 40px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  font-family: var(--body);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.evaluate-button:hover {
+  filter: brightness(1.06);
+}
+
+.evaluate-button:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+/* LLM output: spaced further below the Evaluate button, shown on a card */
+.response-container {
+  width: 60%;
+  margin: 40px auto 20px auto;
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.response-container:not(:empty) {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 18px;
+}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <div class="nav-left">
+    <button class="arrow-btn" id="arrowBtn" aria-label="Menu">↓</button>
+    <a class="home-popup" id="homePopup" href="index.html">home</a>
+  </div>
+
+  <button class="logout-btn" onclick="window.location.href='index.html'">logout</button>
+</div>
+
+<!-- Logo: top-left, under the bar and under the home popup -->
+<div class="logo-row">
+  <img src="logo.jpg" alt="Medicum" />
+</div>
+
+<div class="question-row">
+  <div class="question-text" id="questionText">List 5 psychiatric or medical conditions that can lead to memory impairment in older people?</div>
+</div>
+
+<div class="large-textbox-container">
+  <textarea class="large-textbox" placeholder="Start typing..."></textarea>
+  <button class="evaluate-button">Evaluate</button>
+</div>
+
+<script>
+// Grab elements
+const promptBox = document.querySelector('.large-textbox');
+const evaluateBtn = document.querySelector('.evaluate-button');
+
+// Hidden master prompt (developer-defined). ALWAYS sent first, before anything the user types.
+const MASTER_PROMPT = `You always answer in EN & are given a final medical school student exam question on psychiatry where the question is List 5 psychiatric or medical conditions that can lead to memory impariment in older people & the answer to this question is #1alzheimer #2head trauma #3parkinson disease #4vitaminb12problems #5syphillis;Right after the question mark you will later see is what a user will write as their answer;so your job is to look at that content after the question mark and mark it out of five based on what I already told you; your answer back as a reply will only tell the user their mark out of five and also what part they got wrong and what parts they did not answer or got wrong.Be extremely detailed in your evaluation by writing a entire paragraph to explain your grading?`;
+
+// Create a container for the response (placed below the Evaluate button with extra spacing)
+const responseContainer = document.createElement('div');
+responseContainer.className = 'response-container';
+promptBox.parentNode.appendChild(responseContainer);
+
+evaluateBtn.addEventListener('click', async () => {
+  const userPrompt = promptBox.value.trim();
+
+  if (!userPrompt) {
+    alert('Please enter a prompt');
+    return;
+  }
+
+  // Clear previous response
+  responseContainer.textContent = 'Evaluating answer...';
+  evaluateBtn.disabled = true;
+
+  // ORDER GUARANTEE:
+  // Build ONE message string. The master prompt is the very first text,
+  // followed by a blank line, followed by the user's input.
+  const finalPrompt = MASTER_PROMPT + '\n\n' + userPrompt;
+
+  try {
+    // The DeepSeek API key lives in Vercel as DEEPSEEK_API_KEY and is used by /api/chat.
+    const resp = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [
+          { role: 'user', content: finalPrompt }   // master prompt first, user text after
+        ]
+      })
+    });
+
+    const data = await resp.json().catch(() => ({}));
+
+    if (!resp.ok) {
+      responseContainer.textContent = 'Error: ' + (data.error ?? resp.statusText);
+      return;
+    }
+
+    responseContainer.textContent = data.reply ?? 'No response';
+  } catch (error) {
+    responseContainer.textContent = 'Fetch error: ' + error.message;
+  } finally {
+    evaluateBtn.disabled = false;
+  }
+});
+
+// Down arrow: toggles the tiny "home" popup
+const arrowBtn = document.getElementById('arrowBtn');
+const homePopup = document.getElementById('homePopup');
+
+arrowBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  homePopup.classList.toggle('show');
+});
+
+// Clicking elsewhere closes the "home" popup
+document.addEventListener('click', () => {
+  homePopup.classList.remove('show');
+});
+</script>
+</body>
+</html>
