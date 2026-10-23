@@ -1,0 +1,266 @@
+/* ---------- Design tokens (from the shared stylesheet) ---------- */
+:root{
+  color-scheme:light;
+  --bg:#F8F4F1;            /* straw white - matches the logo.jpg background so the JPG blends in */
+  --surface:#FFFFFF; --surface-2:#EEF0F4; --ink:#17202B; --muted:#5A6473; --line:#DCE1E8;
+  --accent:#B3202E; --accent-ink:#FFFFFF; --accent-soft:#FBEAEC; --blue:#2A67AD; --blue-soft:#E6EFF9;
+  --good:#2C7A51; --good-soft:#E3F2EA; --warn:#A76A12; --warn-soft:#FBF0DC; --bad:#BF2F2F; --bad-soft:#FBE6E6;
+  --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:10px;
+}
+*{box-sizing:border-box}
+
+/* Page must always be scrollable, no matter how long the question/answer gets */
+html, body {
+  height: auto;
+  overflow-y: auto;
+}
+
+body {
+  margin: 0;
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-bottom: 60px;   /* breathing room at the bottom when scrolled */
+}
+button, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 4px; }
+
+/* ---------- Burgundy top bar ---------- */
+.top-bar {
+  width: 100%;
+  height: 60px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  position: relative;
+  flex-shrink: 0;
+  border-bottom: 1px solid #7D1620;
+}
+
+/* Left arrow + tiny home popup */
+.nav-left {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.arrow-btn {
+  background: transparent;
+  border: none;
+  color: var(--accent-ink);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-family: var(--body);
+}
+
+.arrow-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* styled like the design system's .menu dropdown */
+.home-popup {
+  position: absolute;
+  top: 54px;
+  left: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 8px 14px;
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+  display: none;
+  white-space: nowrap;
+  box-shadow: 0 10px 30px rgb(0 0 0 / .14);
+  z-index: 30;
+}
+
+.home-popup:hover {
+  background: var(--surface-2);
+}
+
+.home-popup.show {
+  display: inline-block;
+}
+
+/* Right logout button - design-system .btn on the burgundy bar */
+.logout-btn {
+  display: inline-flex;
+  align-items: center;
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid var(--surface);
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.logout-btn:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent-soft);
+}
+
+/* ---------- API key textbox (hidden by default; toggled by the top-left down arrow) ---------- */
+.textbox-container {
+  width: 60%;
+  margin: 30px auto 0 auto;
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.textbox-container.show {
+  display: flex;
+}
+
+.textbox-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 5px;
+}
+
+.small-textbox {
+  width: 100%;
+  height: 40px;
+  font-family: var(--body);
+  font-size: 15px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.small-textbox:focus,
+.large-textbox:focus {
+  border-color: var(--blue);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(42, 103, 173, 0.2);
+}
+
+/* ---------- Logo: top-left, below the burgundy bar.
+   It sits in the normal flow AFTER the API key box, so it is always below the
+   home popup and below the API key textbox whenever they drop down. ---------- */
+.logo-row {
+  width: 100%;
+  padding: 40px 20px 0 20px;   /* 40px clears the home popup that hangs under the bar */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.logo-row img {
+  height: 48px;
+  width: auto;
+  display: block;
+}
+
+/* ---------- Question: same width/font as the LLM answer, always centred, any length ---------- */
+.question-row {
+  width: 60%;
+  margin: 24px auto 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.question-text {
+  width: 100%;
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  line-height: 1.4;
+  margin: 0;
+  text-align: center;       /* always centred */
+  white-space: pre-wrap;    /* long / multi-line questions wrap and push the page down */
+  word-wrap: break-word;
+}
+
+.large-textbox-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.large-textbox {
+  width: 60%;
+  height: 300px;
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  resize: vertical;
+}
+
+.large-textbox::placeholder,
+.small-textbox::placeholder {
+  color: var(--muted);
+}
+
+/* Evaluate - design-system .btn.primary */
+.evaluate-button {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 40px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  font-family: var(--body);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.evaluate-button:hover {
+  filter: brightness(1.06);
+}
+
+/* LLM output: spaced further below the Evaluate button, shown on a card */
+.response-container {
+  width: 60%;
+  margin: 40px auto 20px auto;
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.response-container:not(:empty) {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 18px;
+}
